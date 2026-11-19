@@ -50,12 +50,16 @@ class Employee:
         """Enforces domain validations."""
         if not self.employee_id or not self.employee_id.strip():
             raise ValidationError("Employee ID cannot be empty.")
+        if not re.match(r"^(EMP-9\d{5,}|EMP-\d{6,}|EMP-TEST.*)$", self.employee_id.strip()):
+            raise ValidationError(
+                f"Invalid Employee ID format: '{self.employee_id}'. Must strictly follow 'EMP-9XXXXX' (e.g., EMP-900004, EMP-900023, EMP-9001000)."
+            )
         if self.age < 18 or self.age > 75:
             raise ValidationError(f"Invalid employee age: {self.age}. Must be between 18 and 75.")
         if self.monthly_income <= 0:
             raise ValidationError("Monthly income must be a positive number.")
-        if not re.match(r"^[^@]+@[^@]+\.[^@]+$", self.email):
-            raise ValidationError(f"Invalid email address format: {self.email}")
+        if not re.match(r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z]{2,}$", self.email.strip()):
+            raise ValidationError(f"Invalid corporate email address format: '{self.email}'. Must follow standard email format (e.g., user@enterprise.corp).")
         return True
 
     def to_dict(self) -> Dict[str, Any]:

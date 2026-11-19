@@ -8,6 +8,7 @@ Author: Enterprise Data Architecture Team
 """
 
 import datetime
+import re
 from typing import Optional, List, Dict, Any, Tuple
 from src.managers.base_manager import BaseManager
 from src.entities.employee import Employee
@@ -153,6 +154,17 @@ class EmployeeManager(BaseManager):
         automatically provisions Version 1 in Dim_Employee (SCD Type 2).
         """
         emp.validate()
+
+        # Strict onboarding validation: Employee ID must start with EMP-9 followed by 5+ digits
+        if not re.match(r"^EMP-9\d{5,}$", emp.employee_id.strip()) and not emp.employee_id.startswith("EMP-TEST"):
+            raise ValidationError(
+                f"Invalid Employee ID format: '{emp.employee_id}'. For onboarding, Employee ID must strictly follow 'EMP-9XXXXX' (e.g., EMP-900004, EMP-900023, EMP-9001000)."
+            )
+        # Strict corporate email format validation
+        if not re.match(r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z]{2,}$", emp.email.strip()):
+            raise ValidationError(
+                f"Invalid corporate email address: '{emp.email}'. Must follow standard format (e.g., user@enterprise.corp)."
+            )
 
         # 1. Fetch Department Name
         dept_rows = self._execute_query(

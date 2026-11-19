@@ -10,6 +10,7 @@ Design: Professional Enterprise UI
 
 import streamlit as st
 import datetime
+import re
 import pandas as pd
 from src.database.db_manager import get_db
 from src.entities.employee import Employee
@@ -59,10 +60,18 @@ with tabs[0]:
     with st.form("onboard_form", clear_on_submit=False):
         col1, col2, col3 = st.columns(3)
         with col1:
-            emp_id_input = st.text_input("Employee ID", value="EMP-900004", help="Unique organizational identifier")
+            emp_id_input = st.text_input(
+                "Employee ID", 
+                value="EMP-900004", 
+                help="Format must strictly be 'EMP-9XXXXX' (e.g. EMP-900004, EMP-900023, EMP-9001000)"
+            )
             first_name = st.text_input("First Name", value="Sophia")
             last_name = st.text_input("Last Name", value="Miller")
-            email = st.text_input("Corporate Email", value="sophia.miller@enterprise.corp")
+            email = st.text_input(
+                "Corporate Email", 
+                value="sophia.miller@enterprise.corp",
+                help="Standard email format: name@domain.com"
+            )
             phone = st.text_input("Contact Phone", value="+1-555-829-4100")
 
         with col2:
@@ -84,31 +93,49 @@ with tabs[0]:
         submitted = st.form_submit_button("Submit Onboarding Record", type="primary")
 
         if submitted:
-            try:
-                new_emp = Employee(
-                    employee_id=emp_id_input.strip(),
-                    first_name=first_name.strip(),
-                    last_name=last_name.strip(),
-                    email=email.strip().lower(),
-                    phone=phone.strip(),
-                    gender=gender,
-                    age=int(age),
-                    marital_status=marital_status,
-                    hire_date=hire_date.isoformat(),
-                    department_id=dept_dict[dept_selected],
-                    job_role=job_role.strip(),
-                    education_field=education,
-                    monthly_income=float(monthly_income),
-                    overtime=overtime,
-                    years_at_company=0,
-                    status="Active"
+            emp_id_val = emp_id_input.strip()
+            email_val = email.strip().lower()
+
+            # 1. Strict Employee ID format validation: EMP-9 followed by 5+ digits
+            if not re.match(r"^EMP-9\d{5,}$", emp_id_val):
+                st.error(
+                    f"❌ Invalid Employee ID format: '{emp_id_val}'. "
+                    "Employee ID must start with 'EMP-9' followed by at least 5 digits "
+                    "(e.g., EMP-900004, EMP-900023, EMP-9001000). Record was NOT saved to the database."
                 )
-                emp_mgr.onboard_employee(new_emp)
-                st.session_state["target_emp_id"] = new_emp.employee_id
-                st.success(f"Personnel record created for {new_emp.full_name} ({new_emp.employee_id}). Synchronized to Dim_Employee as Version 1.")
-                st.info(f"To execute career progression or salary adjustments, switch to the 'Role & Department Transitions' tab. Employee ID {new_emp.employee_id} has been pre-selected.")
-            except Exception as e:
-                st.error(f"Onboarding Transaction Error: {e}")
+            # 2. Strict Corporate Email validation
+            elif not re.match(r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z]{2,}$", email_val):
+                st.error(
+                    f"❌ Invalid Corporate Email format: '{email_val}'. "
+                    "Email must follow standard format with a valid domain (e.g., user@enterprise.corp or name@domain.com). "
+                    "Record was NOT saved to the database."
+                )
+            else:
+                try:
+                    new_emp = Employee(
+                        employee_id=emp_id_val,
+                        first_name=first_name.strip(),
+                        last_name=last_name.strip(),
+                        email=email_val,
+                        phone=phone.strip(),
+                        gender=gender,
+                        age=int(age),
+                        marital_status=marital_status,
+                        hire_date=hire_date.isoformat(),
+                        department_id=dept_dict[dept_selected],
+                        job_role=job_role.strip(),
+                        education_field=education,
+                        monthly_income=float(monthly_income),
+                        overtime=overtime,
+                        years_at_company=0,
+                        status="Active"
+                    )
+                    emp_mgr.onboard_employee(new_emp)
+                    st.session_state["target_emp_id"] = new_emp.employee_id
+                    st.success(f"Personnel record created for {new_emp.full_name} ({new_emp.employee_id}). Synchronized to Dim_Employee as Version 1.")
+                    st.info(f"To execute career progression or salary adjustments, switch to the 'Role & Department Transitions' tab. Employee ID {new_emp.employee_id} has been pre-selected.")
+                except Exception as e:
+                    st.error(f"Onboarding Transaction Error: {e}")
 
 # =============================================================================
 # TAB 2: CAREER & ROLE REASSIGNMENT (SCD TYPE 2 LIVE TRIGGER)

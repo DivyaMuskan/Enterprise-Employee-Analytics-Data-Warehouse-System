@@ -74,6 +74,96 @@ class TestOOPBackend(unittest.TestCase):
         self.assertEqual(emp.full_name, "Jane Doe")
         self.assertEqual(emp.annual_salary, 138000.0)
 
+        # Invalid Employee ID format (e.g. "1234") - must raise ValidationError
+        with self.assertRaises(ValidationError):
+            Employee(
+                employee_id="1234",
+                first_name="Invalid",
+                last_name="Format",
+                email="invalid.format@corp.com",
+                phone="123",
+                gender="Male",
+                age=30,
+                marital_status="Single",
+                hire_date="2024-01-01",
+                department_id=1,
+                job_role="Engineer",
+                education_field="CS",
+                monthly_income=5000.0
+            )
+
+        # Valid EMP-9000XX and EMP-9001000 formats
+        emp_valid = Employee(
+            employee_id="EMP-900004",
+            first_name="Sophia",
+            last_name="Miller",
+            email="sophia.miller@enterprise.corp",
+            phone="+1-555-829-4100",
+            gender="Female",
+            age=29,
+            marital_status="Single",
+            hire_date="2024-01-01",
+            department_id=4,
+            job_role="Software Engineer",
+            education_field="Computer Science",
+            monthly_income=8500.0
+        )
+        self.assertEqual(emp_valid.employee_id, "EMP-900004")
+
+        # Valid EMP-9001000 scale format
+        emp_scale = Employee(
+            employee_id="EMP-9001000",
+            first_name="Marcus",
+            last_name="Vance",
+            email="marcus.vance@enterprise.corp",
+            phone="+1-555-829-4101",
+            gender="Male",
+            age=34,
+            marital_status="Married",
+            hire_date="2024-01-01",
+            department_id=4,
+            job_role="Lead Architect",
+            education_field="Computer Science",
+            monthly_income=12000.0
+        )
+        self.assertEqual(emp_scale.employee_id, "EMP-9001000")
+
+        # Invalid short format (e.g. "EMP-12") - must raise ValidationError
+        with self.assertRaises(ValidationError):
+            Employee(
+                employee_id="EMP-12",
+                first_name="Short",
+                last_name="ID",
+                email="short.id@enterprise.corp",
+                phone="123",
+                gender="Male",
+                age=30,
+                marital_status="Single",
+                hire_date="2024-01-01",
+                department_id=1,
+                job_role="Engineer",
+                education_field="CS",
+                monthly_income=5000.0
+            )
+
+        # Invalid corporate email format - must raise ValidationError
+        with self.assertRaises(ValidationError):
+            Employee(
+                employee_id="EMP-900025",
+                first_name="Bad",
+                last_name="Email",
+                email="not-an-email",
+                phone="123",
+                gender="Male",
+                age=30,
+                marital_status="Single",
+                hire_date="2024-01-01",
+                department_id=1,
+                job_role="Engineer",
+                education_field="CS",
+                monthly_income=5000.0
+            )
+
         # Invalid employee (underage) - must raise ValidationError
         with self.assertRaises(ValidationError):
             Employee(
