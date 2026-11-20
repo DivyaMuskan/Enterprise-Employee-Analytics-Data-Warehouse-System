@@ -15,13 +15,25 @@ import plotly.graph_objects as go
 import altair as alt
 from src.database.db_manager import get_db
 from src.managers.analytics_manager import AnalyticsManager
-from src.ui import apply_ui_theme
+from src.ui import apply_ui_theme, render_page_header, render_sidebar, style_plotly
 
 st.set_page_config(page_title="Executive Analytics Dashboard", layout="wide")
 apply_ui_theme()
 
-st.markdown('<div class="dash-header">Executive Analytics & Workforce Intelligence</div>', unsafe_allow_html=True)
-st.markdown('<div class="dash-sub">Multi-dimensional analytics driven directly by the OLAP Star Schema and SQL Window Functions.</div>', unsafe_allow_html=True)
+render_sidebar(
+    "Leadership workspace",
+    "Executive analytics",
+    "Board-ready workforce intelligence powered by the dimensional warehouse.",
+)
+render_page_header(
+    "Executive intelligence",
+    "Workforce Intelligence Dashboard",
+    "Multi-dimensional analytics driven directly by the OLAP Star Schema and SQL Window Functions.",
+)
+st.markdown(
+    '<div class="hero-strip"><div><strong>Leadership snapshot</strong><br><span>Use the controls to focus the narrative, then explore the evidence behind every headline metric.</span></div><span class="audit-badge">OLAP reporting layer</span></div>',
+    unsafe_allow_html=True,
+)
 
 # Initialize Analytics DAL
 db = get_db()
@@ -33,6 +45,8 @@ year_filter = st.sidebar.selectbox("Evaluation Period (Year)", [2025, 2024, 2023
 dept_options = ["All Departments", "Research & Development", "Sales", "Human Resources", "Software Engineering", "Finance & Operations"]
 dept_filter = st.sidebar.selectbox("Department Scope", dept_options, index=0)
 top_n_filter = st.sidebar.slider("DENSE_RANK Cutoff Tier", min_value=1, max_value=5, value=3)
+st.sidebar.divider()
+st.sidebar.caption("Filters update the talent ranking view. Other analytical sections remain available for enterprise context.")
 
 # Load Executive KPIs
 kpis = analytics_mgr.get_executive_kpis()
@@ -87,6 +101,7 @@ if not df_top.empty:
             margin=dict(l=10, r=10, t=35, b=10),
             font=dict(family="sans-serif", size=11)
         )
+        style_plotly(fig_top, height=430)
         st.plotly_chart(fig_top, use_container_width=True)
 
     with table_col:
@@ -144,6 +159,7 @@ if not df_yoy.empty:
             margin=dict(l=10, r=10, t=35, b=10),
             font=dict(family="sans-serif", size=11)
         )
+        style_plotly(fig_yoy, height=390)
         st.plotly_chart(fig_yoy, use_container_width=True)
 
     with yoy_col2:
@@ -157,7 +173,7 @@ if not df_yoy.empty:
             color="total_promotions",
             color_continuous_scale="Blues"
         )
-        fig_prom.update_layout(height=390, margin=dict(l=10, r=10, t=35, b=10), font=dict(family="sans-serif", size=11))
+        style_plotly(fig_prom, height=390)
         st.plotly_chart(fig_prom, use_container_width=True)
 
 st.divider()
@@ -188,7 +204,7 @@ if not df_attr.empty:
             },
             title="Work-Life Balance vs Attrition Risk by Functional Role"
         )
-        fig_scatter.update_layout(height=390, margin=dict(l=10, r=10, t=35, b=10), font=dict(family="sans-serif", size=11))
+        style_plotly(fig_scatter, height=390)
         st.plotly_chart(fig_scatter, use_container_width=True)
 
     with r_col2:
@@ -221,7 +237,7 @@ if not df_dept_dist.empty:
             hole=0.45,
             color_discrete_sequence=["#1E40AF", "#3B82F6", "#60A5FA", "#93C5FD", "#BFDBFE"]
         )
-        fig_donut.update_layout(height=370, margin=dict(l=10, r=10, t=35, b=10), font=dict(family="sans-serif", size=11))
+        style_plotly(fig_donut, height=370)
         st.plotly_chart(fig_donut, use_container_width=True)
 
     with d_col2:
@@ -236,7 +252,7 @@ if not df_dept_dist.empty:
             color_continuous_scale="Blues"
         )
         fig_pay.update_traces(texttemplate='$%{text:,.0f}', textposition='outside')
-        fig_pay.update_layout(height=370, margin=dict(l=10, r=10, t=35, b=10), font=dict(family="sans-serif", size=11))
+        style_plotly(fig_pay, height=370)
         st.plotly_chart(fig_pay, use_container_width=True)
 
 st.divider()

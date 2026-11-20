@@ -11,7 +11,7 @@ import streamlit as st
 import pandas as pd
 from src.database.db_manager import get_db
 from src.managers.analytics_manager import AnalyticsManager
-from src.ui import apply_ui_theme
+from src.ui import apply_ui_theme, render_page_header, render_sidebar
 
 # Streamlit Page Configuration
 st.set_page_config(
@@ -25,10 +25,14 @@ apply_ui_theme()
 
 def main():
     # Sidebar
-    st.sidebar.markdown("### System Architecture")
-    st.sidebar.markdown("**Operational Store (OLTP):** 3NF Relational")
-    st.sidebar.markdown("**Data Warehouse (OLAP):** Star Schema")
-    st.sidebar.markdown("**Temporal Model:** SCD Type 2 Active")
+    render_sidebar(
+        "Command center",
+        "Platform overview",
+        "A single operating view across workforce, warehouse, and people intelligence.",
+    )
+    st.sidebar.markdown("**Operational Store (OLTP)**  \n3NF relational records")
+    st.sidebar.markdown("**Data Warehouse (OLAP)**  \nStar schema analytics")
+    st.sidebar.markdown("**Temporal Model**  \nSCD Type 2 history")
     st.sidebar.divider()
 
     db = get_db()
@@ -39,11 +43,14 @@ def main():
     </div>
     """, unsafe_allow_html=True)
 
-    # Main Header
-    st.markdown('<div class="enterprise-header">Enterprise Employee Analytics & Data Warehouse System</div>', unsafe_allow_html=True)
+    render_page_header(
+        "Enterprise people intelligence",
+        "Employee Analytics & Data Warehouse",
+        "A unified operating layer for workforce decisions, historical career journeys, and executive reporting.",
+    )
     st.markdown(
-        '<div class="enterprise-sub">Unified Operational Data Store (OLTP) and Dimensional Warehouse (OLAP) with Automated Slowly Changing Dimension (SCD Type 2) Lifecycle Tracking.</div>',
-        unsafe_allow_html=True
+        '<div class="hero-strip"><div><strong>Good morning, leadership team</strong><br><span>Review workforce health, talent movement, and organizational capacity from one trusted source.</span></div><span class="audit-badge">Live warehouse view</span></div>',
+        unsafe_allow_html=True,
     )
 
     # Initialize Analytics Manager
@@ -109,7 +116,8 @@ def main():
     st.write("")
 
     # Portal Module Navigation Cards
-    st.markdown("### Functional Modules")
+    st.markdown('<div class="section-title">Explore the platform</div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-desc">Move from daily workforce operations to board-ready intelligence without leaving the system.</div>', unsafe_allow_html=True)
     card_col1, card_col2 = st.columns(2)
 
     with card_col1:
@@ -145,6 +153,25 @@ def main():
     st.divider()
 
     # System Architecture Information
+    st.markdown('<div class="section-title">Data architecture at a glance</div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-desc">A governed flow from operational activity to decision-ready intelligence.</div>', unsafe_allow_html=True)
+    arch1, arch2, arch3 = st.columns(3)
+    with arch1:
+        st.markdown(
+            '<div class="portal-card"><div class="mini-label">01 · Capture</div><h4>Operational store</h4><p>HR records, projects, and appraisals are managed through the transactional OLTP layer.</p></div>',
+            unsafe_allow_html=True,
+        )
+    with arch2:
+        st.markdown(
+            '<div class="portal-card"><div class="mini-label">02 · Preserve</div><h4>Historical warehouse</h4><p>ETL and SCD Type 2 versioning preserve every career and compensation transition.</p></div>',
+            unsafe_allow_html=True,
+        )
+    with arch3:
+        st.markdown(
+            '<div class="portal-card"><div class="mini-label">03 · Decide</div><h4>Executive intelligence</h4><p>Star-schema analytics translate trusted history into workforce and capacity signals.</p></div>',
+            unsafe_allow_html=True,
+        )
+
     with st.expander("System Architecture & Data Warehousing Specifications", expanded=False):
         st.markdown("""
         #### Architecture Overview

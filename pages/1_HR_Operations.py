@@ -18,13 +18,25 @@ from src.entities.project import Project
 from src.entities.review import PerformanceReview
 from src.managers.employee_manager import EmployeeManager
 from src.managers.project_manager import ProjectManager
-from src.ui import apply_ui_theme
+from src.ui import apply_ui_theme, render_page_header, render_sidebar
 
 st.set_page_config(page_title="HR Operations Console", layout="wide")
 apply_ui_theme()
 
-st.markdown('<div class="op-header">HR Operations & Transactional Console</div>', unsafe_allow_html=True)
-st.markdown('<div class="op-sub">Operational record intake, initiative staffing, and automated SCD Type 2 warehouse updates.</div>', unsafe_allow_html=True)
+render_sidebar(
+    "Operations workspace",
+    "HR operations",
+    "Manage people records, staffing capacity, and career transitions with governed workflows.",
+)
+render_page_header(
+    "People operations",
+    "HR Operations Console",
+    "Operational record intake, initiative staffing, and automated SCD Type 2 warehouse updates.",
+)
+st.markdown(
+    '<div class="hero-strip"><div><strong>Operational control center</strong><br><span>Every action below writes through the existing transaction layer and remains fully auditable.</span></div><span class="audit-badge">OLTP + SCD2 governed</span></div>',
+    unsafe_allow_html=True,
+)
 
 # Initialize Managers
 db = get_db()
@@ -55,7 +67,7 @@ tabs = st.tabs([
 # =============================================================================
 with tabs[0]:
     st.markdown('<div class="section-title">New Employee Registration</div>', unsafe_allow_html=True)
-    st.caption("Records operational attributes in OLTP and provisions initial version (Version 1) in Dim_Employee.")
+    st.markdown('<div class="section-desc">Capture a complete employee profile and provision the initial Version 1 record in Dim_Employee.</div>', unsafe_allow_html=True)
 
     with st.form("onboard_form", clear_on_submit=False):
         col1, col2, col3 = st.columns(3)
@@ -169,6 +181,7 @@ with tabs[1]:
     if curr_emp:
         st.markdown(f"**Selected Record:** {curr_emp.full_name} (`{curr_emp.employee_id}`) | Current Role: **{curr_emp.job_role}** | Department: **{curr_emp.department_name}** | Base Monthly Compensation: **${curr_emp.monthly_income:,.2f}**")
 
+        st.markdown('<span class="audit-badge">Current employee record</span>', unsafe_allow_html=True)
         st.markdown("##### Adjustment Parameters")
         with st.form("scd2_update_form"):
             ucol1, ucol2, ucol3 = st.columns(3)
@@ -293,7 +306,7 @@ with tabs[2]:
 # =============================================================================
 with tabs[3]:
     st.markdown('<div class="section-title">Performance Appraisal Entry</div>', unsafe_allow_html=True)
-    st.caption("Logs appraisal evaluation in OLTP and maps surrogate keys into Fact_PerformanceReviews.")
+    st.markdown('<div class="section-desc">Log appraisal evaluation in OLTP and map surrogate keys into Fact_PerformanceReviews.</div>', unsafe_allow_html=True)
 
     with st.form("review_form"):
         r_col1, r_col2, r_col3 = st.columns(3)
