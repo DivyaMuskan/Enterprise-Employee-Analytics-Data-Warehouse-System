@@ -32,6 +32,7 @@ class Employee:
     years_at_company: int = 0
     attrition: str = "No"
     status: str = "Active"
+    _is_persisted: bool = False
 
     def __post_init__(self):
         self.validate()
@@ -50,16 +51,18 @@ class Employee:
         """Enforces domain validations."""
         if not self.employee_id or not self.employee_id.strip():
             raise ValidationError("Employee ID cannot be empty.")
-        if not re.match(r"^(EMP-9\d{5,}|EMP-\d{6,}|EMP-TEST.*)$", self.employee_id.strip()):
-            raise ValidationError(
-                f"Invalid Employee ID format: '{self.employee_id}'. Must strictly follow 'EMP-9XXXXX' (e.g., EMP-900004, EMP-900023, EMP-9001000)."
-            )
+        # Strict onboarding format validation for new (unpersisted) entities
+        if not self._is_persisted:
+            if not re.match(r"^(EMP-9\d{5,}|EMP-\d{6,}|EMP-TEST.*)$", self.employee_id.strip()):
+                raise ValidationError(
+                    f"Invalid Employee ID format: '{self.employee_id}'. Must strictly follow 'EMP-9XXXXX' (e.g., EMP-900004, EMP-900023, EMP-9001000)."
+                )
+            if not re.match(r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z]{2,}$", self.email.strip()):
+                raise ValidationError(f"Invalid corporate email address format: '{self.email}'. Must follow standard email format (e.g., user@enterprise.corp).")
         if self.age < 18 or self.age > 75:
             raise ValidationError(f"Invalid employee age: {self.age}. Must be between 18 and 75.")
         if self.monthly_income <= 0:
             raise ValidationError("Monthly income must be a positive number.")
-        if not re.match(r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z]{2,}$", self.email.strip()):
-            raise ValidationError(f"Invalid corporate email address format: '{self.email}'. Must follow standard email format (e.g., user@enterprise.corp).")
         return True
 
     def to_dict(self) -> Dict[str, Any]:
@@ -106,5 +109,6 @@ class Employee:
             overtime=str(data.get("overtime", "No")),
             years_at_company=int(data.get("years_at_company", 0)),
             attrition=str(data.get("attrition", "No")),
-            status=str(data.get("status", "Active"))
+            status=str(data.get("status", "Active")),
+            _is_persisted=True
         )
