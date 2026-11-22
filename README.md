@@ -284,6 +284,16 @@ The application is cloud-native and deployable in 1 click to **Streamlit Communi
 3. If connecting to a cloud MySQL instance, populate the secrets in the Streamlit Cloud dashboard using `.streamlit/secrets.toml.example`. Otherwise, the system automatically runs serverless using the built-in SQLite warehouse.
 4. For comprehensive configuration details, see [`docs/DEPLOYMENT_GUIDE.md`](docs/DEPLOYMENT_GUIDE.md).
 
+### Streamlit login and roles
+
+Authentication is configured in Streamlit secrets; no account or password is hard-coded in the app. Copy `.streamlit/secrets.toml.example` to `.streamlit/secrets.toml` for local use, replace each placeholder hash, and add the same `[users.<username>]` sections to the Streamlit Cloud secrets when deploying. Generate a salted password hash with:
+
+```bash
+python -c "from src.auth import hash_password; print(hash_password('your-password'))"
+```
+
+The `hr` role can read and write through HR Operations. The `manager` and `employee` roles can view analytics and the workforce directory but cannot access HR write operations.
+
 ---
 
 ## 🎯 Key Deliverables & Desired Outputs

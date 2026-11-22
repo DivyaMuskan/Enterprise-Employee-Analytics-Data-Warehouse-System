@@ -19,17 +19,56 @@ from src.entities.review import PerformanceReview
 from src.managers.employee_manager import EmployeeManager
 from src.managers.project_manager import ProjectManager
 from src.ui import apply_ui_theme
+from src.auth import has_permission, require_authentication
 
 st.set_page_config(page_title="HR Operations Console", layout="wide")
 apply_ui_theme()
 
-st.markdown('<div class="op-header">HR Operations & Transactional Console</div>', unsafe_allow_html=True)
-st.markdown('<div class="op-sub">Operational record intake, initiative staffing, and automated SCD Type 2 warehouse updates.</div>', unsafe_allow_html=True)
+current_user = require_authentication()
+can_write = has_permission(current_user["role"], "write")
+
+page_title = "HR Operations & Transactional Console" if can_write else "Workforce Directory"
+page_subtitle = (
+    "Operational record intake, initiative staffing, and automated SCD Type 2 warehouse updates."
+    if can_write
+    else "Read-only employee directory. Your account does not have permission to change records."
+)
+st.markdown(f'<div class="op-header">{page_title}</div>', unsafe_allow_html=True)
+st.markdown(f'<div class="op-sub">{page_subtitle}</div>', unsafe_allow_html=True)
+
+
+def render_workforce_directory(emp_mgr, dept_dict):
+    st.markdown('<div class="section-title">Workforce Directory & Audit Log</div>', unsafe_allow_html=True)
+
+    d_col1, d_col2 = st.columns([3, 1])
+    with d_col1:
+        dir_search = st.text_input("Filter Directory (ID or Name):", placeholder="e.g. EMP-000010 or Sophia")
+    with d_col2:
+        dir_dept = st.selectbox("Department Filter", ["All Departments"] + list(dept_dict.keys()))
+
+    dept_filter_id = dept_dict.get(dir_dept) if dir_dept != "All Departments" else None
+    matched_emps = emp_mgr.list_employees(
+        limit=50,
+        search=dir_search if dir_search else None,
+        department_id=dept_filter_id
+    )
+
+    if matched_emps:
+        df_dir = pd.DataFrame([e.to_dict() for e in matched_emps])
+        st.dataframe(
+            df_dir[[
+                "employee_id", "first_name", "last_name", "department_name",
+                "job_role", "monthly_income", "hire_date", "overtime", "status"
+            ]],
+            use_container_width=True,
+            hide_index=True
+        )
+    else:
+        st.info("No matching records returned.")
 
 # Initialize Managers
 db = get_db()
 emp_mgr = EmployeeManager(db)
-proj_mgr = ProjectManager(db)
 
 # Fetch Departments List for Dropdowns
 try:
@@ -40,6 +79,12 @@ except Exception:
     dept_list = []
     dept_dict = {"Research & Development": 1, "Sales": 2, "Human Resources": 3, "Software Engineering": 4, "Finance & Operations": 5}
     dept_id_to_name = {v: k for k, v in dept_dict.items()}
+
+if not can_write:
+    render_workforce_directory(emp_mgr, dept_dict)
+    st.stop()
+
+proj_mgr = ProjectManager(db)
 
 # Tab Navigation (Clean corporate tab titles without emojis)
 tabs = st.tabs([
@@ -339,26 +384,4 @@ with tabs[3]:
 # TAB 5: DIRECTORY & SCD2 INSPECTOR
 # =============================================================================
 with tabs[4]:
-    st.markdown('<div class="section-title">Workforce Directory & Audit Log</div>', unsafe_allow_html=True)
-
-    d_col1, d_col2 = st.columns([3, 1])
-    with d_col1:
-        dir_search = st.text_input("Filter Directory (ID or Name):", placeholder="e.g. EMP-000010 or Sophia")
-    with d_col2:
-        dir_dept = st.selectbox("Department Filter", ["All Departments"] + list(dept_dict.keys()))
-
-    dept_filter_id = dept_dict.get(dir_dept) if dir_dept != "All Departments" else None
-    matched_emps = emp_mgr.list_employees(limit=50, search=dir_search if dir_search else None, department_id=dept_filter_id)
-
-    if matched_emps:
-        df_dir = pd.DataFrame([e.to_dict() for e in matched_emps])
-        st.dataframe(
-            df_dir[[
-                "employee_id", "first_name", "last_name", "department_name",
-                "job_role", "monthly_income", "hire_date", "overtime", "status"
-            ]],
-            use_container_width=True,
-            hide_index=True
-        )
-    else:
-        st.info("No matching records returned.")
+    render_workforce_directory(emp_mgr, dept_dict)
