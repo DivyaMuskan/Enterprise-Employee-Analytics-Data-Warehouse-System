@@ -16,9 +16,12 @@ import altair as alt
 from src.database.db_manager import get_db
 from src.managers.analytics_manager import AnalyticsManager
 from src.ui import apply_ui_theme, render_page_header, render_sidebar, style_plotly
+from src.ui import apply_ui_theme
+from src.auth import require_authentication
 
 st.set_page_config(page_title="Executive Analytics Dashboard", layout="wide")
 apply_ui_theme()
+require_authentication()
 
 render_sidebar(
     "Executive analytics",

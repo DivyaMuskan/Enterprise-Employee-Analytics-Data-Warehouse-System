@@ -12,6 +12,8 @@ import pandas as pd
 from src.database.db_manager import get_db
 from src.managers.analytics_manager import AnalyticsManager
 from src.ui import apply_ui_theme, render_page_header, render_sidebar
+from src.ui import apply_ui_theme
+from src.auth import has_permission, require_authentication
 
 # Streamlit Page Configuration
 st.set_page_config(
@@ -25,6 +27,7 @@ apply_ui_theme()
 
 def main():
     db = get_db()
+    current_user = require_authentication()
 
     # Sidebar
     render_sidebar(
@@ -45,6 +48,12 @@ def main():
         "Enterprise HR analytics",
         "Employee Analytics & Data Warehouse",
         "Workforce metrics and reporting in one place.",
+    # Main Header
+    st.markdown('<div class="enterprise-header">Enterprise Employee Analytics & Data Warehouse System</div>', unsafe_allow_html=True)
+    st.caption(f"Signed in as {current_user['username']} ({current_user['role'].title()})")
+    st.markdown(
+        '<div class="enterprise-sub">Unified Operational Data Store (OLTP) and Dimensional Warehouse (OLAP) with Automated Slowly Changing Dimension (SCD Type 2) Lifecycle Tracking.</div>',
+        unsafe_allow_html=True
     )
 
     # Initialize Analytics Manager
@@ -126,7 +135,12 @@ def main():
             </ul>
         </div>
         """, unsafe_allow_html=True)
-        st.page_link("pages/1_HR_Operations.py", label="Access HR Operations Portal →")
+        hr_portal_label = (
+            "Access HR Operations Portal →"
+            if has_permission(current_user["role"], "write")
+            else "Access Workforce Directory (Read Only) →"
+        )
+        st.page_link("pages/1_HR_Operations.py", label=hr_portal_label)
 
     with card_col2:
         st.markdown("""

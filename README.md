@@ -4,7 +4,7 @@ An end-to-end, enterprise-grade Data Warehousing and Analytics solution engineer
 
 ---
 
-## 📋 Table of Contents
+##  Table of Contents
 1. [Project Overview & Problem Statement](#-project-overview--problem-statement)
 2. [Technology Stack](#-technology-stack)
 3. [System Architecture](#-system-architecture)
@@ -22,7 +22,7 @@ An end-to-end, enterprise-grade Data Warehousing and Analytics solution engineer
 
 ---
 
-## 🏢 Project Overview & Problem Statement
+## Project Overview & Problem Statement
 
 Modern enterprise HR and executive leadership require granular visibility into employee performance, attrition indicators, project allocations, and organizational mobility. Legacy systems typically store flat or fragmented operational snapshots, making it impossible to perform longitudinal analyses—such as evaluating how an employee's performance rating shifts following a departmental transfer or salary adjustment.
 
@@ -36,7 +36,7 @@ This project delivers a complete enterprise solution:
 
 ---
 
-## 🛠 Technology Stack
+## Technology Stack
 
 | Domain | Technology / Tool | Purpose |
 | :--- | :--- | :--- |
@@ -52,7 +52,7 @@ This project delivers a complete enterprise solution:
 
 ---
 
-## 🏗 System Architecture
+## System Architecture
 
 ```mermaid
 flowchart TD
@@ -94,7 +94,7 @@ flowchart TD
 
 ---
 
-## 🗺 Phased Implementation Roadmap
+## Phased Implementation Roadmap
 
 ### Phase 1: Architecture, Modeling, and Data Ingestion
 - **Objective:** Establish the foundational data models and generate high-fidelity, scaled synthetic data.
@@ -171,7 +171,7 @@ flowchart TD
 
 ---
 
-## 📂 Repository Structure
+## Repository Structure
 
 ```text
 Enterprise-Employee-Analytics/
@@ -258,7 +258,7 @@ Enterprise-Employee-Analytics/
 
 ---
 
-## 🌿 Git Branching Strategy & Pull Request History
+## Git Branching Strategy & Pull Request History
 
 To comply with enterprise engineering standards, the repository follows a structured feature branching workflow. Each core phase was developed in a dedicated feature branch and merged into `main`:
 
@@ -273,7 +273,7 @@ Standardized pull request submissions adhere to the checklist outlined in [`.git
 
 ---
 
-## ☁️ Cloud Deployment to Streamlit Community Cloud
+## Cloud Deployment to Streamlit Community Cloud
 
 The application is cloud-native and deployable in 1 click to **Streamlit Community Cloud**:
 1. Connect your GitHub account to [share.streamlit.io](https://share.streamlit.io).
@@ -284,9 +284,19 @@ The application is cloud-native and deployable in 1 click to **Streamlit Communi
 3. If connecting to a cloud MySQL instance, populate the secrets in the Streamlit Cloud dashboard using `.streamlit/secrets.toml.example`. Otherwise, the system automatically runs serverless using the built-in SQLite warehouse.
 4. For comprehensive configuration details, see [`docs/DEPLOYMENT_GUIDE.md`](docs/DEPLOYMENT_GUIDE.md).
 
+### Streamlit login and roles
+
+Authentication is configured in Streamlit secrets; no account or password is hard-coded in the app. Copy `.streamlit/secrets.toml.example` to `.streamlit/secrets.toml` for local use, replace each placeholder hash, and add the same `[users.<username>]` sections to the Streamlit Cloud secrets when deploying. Generate a salted password hash with:
+
+```bash
+python -c "from src.auth import hash_password; print(hash_password('your-password'))"
+```
+
+The `hr` role can read and write through HR Operations. The `manager` and `employee` roles can view analytics and the workforce directory but cannot access HR write operations.
+
 ---
 
-## 🎯 Key Deliverables & Desired Outputs
+## Key Deliverables & Desired Outputs
 
 | # | Deliverable | Format / Tool | Target Criteria |
 | :--- | :--- | :--- | :--- |
@@ -299,7 +309,7 @@ The application is cloud-native and deployable in 1 click to **Streamlit Communi
 
 ---
 
-## 🚀 Execution Plan & Verification
+## Execution Plan & Verification
 
 To verify the complete system locally:
 
