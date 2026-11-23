@@ -56,6 +56,13 @@ def apply_ui_theme():
             [data-testid="stSidebar"] .stMarkdown p {
                 line-height: 1.55;
             }
+            [data-testid="stSidebar"] .sidebar-filter-label {
+                color: #7dd3fc !important;
+                font-size: 0.875rem;
+                font-weight: 400;
+                line-height: 1.5;
+                margin: 0 0 0.2rem;
+            }
 
             .enterprise-header, .op-header, .dash-header {
                 color: var(--ink);
@@ -323,20 +330,8 @@ def apply_ui_theme():
 
 
 def render_sidebar(eyebrow: str, title: str, description: str):
-    """Render the shared enterprise navigation and product identity."""
-    st.sidebar.markdown(
-        f"""
-        <div class="brand-lockup">
-            <div class="brand-mark">EA</div>
-            <div class="brand-name">Enterprise Analytics</div>
-            <div class="brand-caption">People intelligence platform</div>
-        </div>
-        <div class="mini-label">{eyebrow}</div>
-        <div style="font-size:0.92rem;font-weight:700;margin:0.25rem 0 0.35rem;">{title}</div>
-        <div style="font-size:0.76rem;color:#a9c1d6;line-height:1.5;">{description}</div>
-        """,
-        unsafe_allow_html=True,
-    )
+    """Keep the sidebar hook available without rendering a branding block."""
+    return None
 
 
 def render_page_header(eyebrow: str, title: str, description: str):
