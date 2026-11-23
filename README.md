@@ -4,7 +4,7 @@ An end-to-end, enterprise-grade Data Warehousing and Analytics solution engineer
 
 ---
 
-## 📋 Table of Contents
+##  Table of Contents
 1. [Project Overview & Problem Statement](#-project-overview--problem-statement)
 2. [Technology Stack](#-technology-stack)
 3. [System Architecture](#-system-architecture)
@@ -22,7 +22,7 @@ An end-to-end, enterprise-grade Data Warehousing and Analytics solution engineer
 
 ---
 
-## 🏢 Project Overview & Problem Statement
+## Project Overview & Problem Statement
 
 Modern enterprise HR and executive leadership require granular visibility into employee performance, attrition indicators, project allocations, and organizational mobility. Legacy systems typically store flat or fragmented operational snapshots, making it impossible to perform longitudinal analyses—such as evaluating how an employee's performance rating shifts following a departmental transfer or salary adjustment.
 
@@ -52,7 +52,7 @@ This project delivers a complete enterprise solution:
 
 ---
 
-## 🏗 System Architecture
+## System Architecture
 
 ```mermaid
 flowchart TD
@@ -94,7 +94,7 @@ flowchart TD
 
 ---
 
-## 🗺 Phased Implementation Roadmap
+## Phased Implementation Roadmap
 
 ### Phase 1: Architecture, Modeling, and Data Ingestion
 - **Objective:** Establish the foundational data models and generate high-fidelity, scaled synthetic data.
@@ -273,7 +273,7 @@ Standardized pull request submissions adhere to the checklist outlined in [`.git
 
 ---
 
-## ☁️ Cloud Deployment to Streamlit Community Cloud
+## Cloud Deployment to Streamlit Community Cloud
 
 The application is cloud-native and deployable in 1 click to **Streamlit Community Cloud**:
 1. Connect your GitHub account to [share.streamlit.io](https://share.streamlit.io).
@@ -296,7 +296,7 @@ The `hr` role can read and write through HR Operations. The `manager` and `emplo
 
 ---
 
-## 🎯 Key Deliverables & Desired Outputs
+## Key Deliverables & Desired Outputs
 
 | # | Deliverable | Format / Tool | Target Criteria |
 | :--- | :--- | :--- | :--- |
@@ -309,7 +309,7 @@ The `hr` role can read and write through HR Operations. The `manager` and `emplo
 
 ---
 
-## 🚀 Execution Plan & Verification
+## Execution Plan & Verification
 
 To verify the complete system locally:
 
