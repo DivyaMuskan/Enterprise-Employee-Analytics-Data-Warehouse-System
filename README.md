@@ -36,7 +36,7 @@ This project delivers a complete enterprise solution:
 
 ---
 
-## 🛠 Technology Stack
+## Technology Stack
 
 | Domain | Technology / Tool | Purpose |
 | :--- | :--- | :--- |
@@ -171,7 +171,7 @@ flowchart TD
 
 ---
 
-## 📂 Repository Structure
+## Repository Structure
 
 ```text
 Enterprise-Employee-Analytics/
@@ -258,7 +258,7 @@ Enterprise-Employee-Analytics/
 
 ---
 
-## 🌿 Git Branching Strategy & Pull Request History
+## Git Branching Strategy & Pull Request History
 
 To comply with enterprise engineering standards, the repository follows a structured feature branching workflow. Each core phase was developed in a dedicated feature branch and merged into `main`:
 
