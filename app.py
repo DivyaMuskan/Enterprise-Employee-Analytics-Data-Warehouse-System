@@ -12,7 +12,6 @@ import pandas as pd
 from src.database.db_manager import get_db
 from src.managers.analytics_manager import AnalyticsManager
 from src.ui import apply_ui_theme, render_page_header, render_sidebar
-from src.ui import apply_ui_theme
 from src.auth import has_permission, require_authentication
 
 # Streamlit Page Configuration
@@ -48,13 +47,9 @@ def main():
         "Enterprise HR analytics",
         "Employee Analytics & Data Warehouse",
         "Workforce metrics and reporting in one place.",
-    # Main Header
-    st.markdown('<div class="enterprise-header">Enterprise Employee Analytics & Data Warehouse System</div>', unsafe_allow_html=True)
-    st.caption(f"Signed in as {current_user['username']} ({current_user['role'].title()})")
-    st.markdown(
-        '<div class="enterprise-sub">Unified Operational Data Store (OLTP) and Dimensional Warehouse (OLAP) with Automated Slowly Changing Dimension (SCD Type 2) Lifecycle Tracking.</div>',
-        unsafe_allow_html=True
     )
+
+    st.caption(f"Signed in as {current_user['username']} ({current_user['role'].title()})")
 
     # Initialize Analytics Manager
     analytics_mgr = AnalyticsManager(db)
